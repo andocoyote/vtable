@@ -115,23 +115,25 @@ void WalkVTable(void* pClass)
 
     if(!status)
     {
-        printf("Failed to intialize symbols: %d\n", GetLastError());
+        printf("Call to InitializeSymbols failed: %d\n", GetLastError());
         return;
     }
  
     // Obtain the base pointer for the vtable
-    // DWORD* pVptr = (DWORD*)*(DWORD*)pClass;
+    //		DWORD* pVptr = (DWORD*)*(DWORD*)pClass;
     DWORD* pBase = (DWORD*)pClass;
     DWORD* pVptr = (DWORD*)*pBase;
 
-    printf("  Object          v-table\n");
-    printf("------------    ------------\n");
-    printf("| 0x%X | -> ", *pBase);
-    printf("| 0x%X |\n", *pVptr);
-    printf("------------    ------------\n");
-    printf("  0x%X        0x%X\n\n", (UINT)pBase, (UINT)pVptr);
+	// Display a graphical represention of the C++ object and associated vtable:
+	//	The first memory location of the object contains the address of the vtable.
+	//	The first memory location in the vtable contains the assress of the first virtual function.
+    printf("        Object          v-table\n");
+	printf("Addr:   0x%X        0x%X\n", (UINT)pBase, (UINT)pVptr);
+    printf("      ------------    ------------\n");
+    printf("Data: | 0x%X | -> | 0x%X |\n", *pBase, *pVptr);
+    printf("      ------------    ------------\n\n");
  
-    // Iterate through VirtualTable.
+    // Iterate through VirtualTable and create a list of VTABLE_ENTRY objects
     DWORD index = 0;
     DWORD functionAddress = pVptr[index];
 
@@ -154,6 +156,14 @@ void WalkVTable(void* pClass)
  
         // Next function pointer.
         functionAddress = pVptr[++index];
+    }
+	
+	status = SymCleanup(GetCurrentProcess());
+	
+	if(!status)
+    {
+        printf("Call to SymCleanup failed: %d\n", GetLastError());
+        return;
     }
 }
  

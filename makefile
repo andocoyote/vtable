@@ -1,13 +1,15 @@
 #Best nmake tutorial: http://www.bogotobogo.com/cplusplus/make.php
 #INCS="path to headers\include"
+
+# Specify the location to my SDK libs (e.g. DbgHelp.Lib)
 LIBS="C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib" 
 
 mybuild: main.obj
-	cl /o vtable.exe main.obj /link  \
-		/LIBPATH:$(LIBS) DbgHelp.Lib 
+	cl /Zi /o vtable.exe main.obj /link  \
+		/DEBUG /LIBPATH:$(LIBS) DbgHelp.Lib 
 
 main.obj: main.cpp
-	cl /c main.cpp -I $(INCS)
+	cl /c main.cpp
 
 all:mybuild
 
