@@ -4,7 +4,9 @@
 #include <queue>
  
 using namespace std;
- 
+
+// Defining our base class from which we will derive other classes
+// in the exploration of the implementation of vtables
 class P
 {
 public:
@@ -19,11 +21,13 @@ protected:
     int x;
 };
 
+// Display the integer value of x
 void P::Display()
 {
     printf("x is %d\n", x);
 }
 
+// Derive a new class from class P and override P's virtual methods
 class Q : public P
 {
 public:
@@ -38,6 +42,7 @@ private:
     int y;
 };
 
+// Display the integer values of x and y
 void Q::Display()
 {
     printf("x is %d and y is %d\n", x, y);
@@ -57,8 +62,8 @@ BOOL InitializeSymbols()
     BOOL status = FALSE;
     DWORD Options = SymGetOptions();
 
-    Options |= SYMOPT_DEBUG;
-    Options |= SYMOPT_UNDNAME; 
+    Options |= SYMOPT_DEBUG; // Display symbol info to the debugger
+    Options |= SYMOPT_UNDNAME; // Present symbols undecorated
  
     SymSetOptions(Options); 
  
@@ -124,7 +129,7 @@ void WalkVTable(void* pClass)
     printf("| 0x%X | -> ", *pBase);
     printf("| 0x%X |\n", *pVptr);
     printf("------------    ------------\n");
-    printf("  0x%X        0x%X\n\n", pBase, pVptr);
+    printf("  0x%X        0x%X\n\n", (UINT)pBase, (UINT)pVptr);
  
     // Iterate through VirtualTable.
     DWORD index = 0;
